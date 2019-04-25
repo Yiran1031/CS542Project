@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class WeightedGraph<T>{
 	public static final int NULL_EDGE = -1;
-	public static final int DEFCAP = 5;
+	public static final int DEFCAP = 10;
 	private static final int MAX_WEIGHT = 10000;
 	private int numVertices;
 	private int maxVertices;
@@ -66,6 +66,10 @@ public class WeightedGraph<T>{
 		edges[row][column] = weight;
 	}
 	
+	public T getVertices(int index)
+	{
+		return vertices[index];
+	}
 	public int weightIs(T fromVertex, T toVertex)
 	{
 		int row;
@@ -74,137 +78,36 @@ public class WeightedGraph<T>{
 		column = indexIs(toVertex);
 		return edges[row][column];
 	}
-	public QueueInterface<T> getToVertices(T vertex)
-	{
-		QueueInterface<T> adjVertices = new LinkedQueue<T>();
-		int fromIndex, toIndex;
-		fromIndex = indexIs(vertex);
-		for(toIndex = 0; toIndex < numVertices; toIndex++) 
-		{
-			if(edges[fromIndex][toIndex] != NULL_EDGE) {
-				try {
-					adjVertices.enqueue(vertices[toIndex]);
-				} catch (QueueOverflowException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		return adjVertices;
-	}
-	 
-	public int[] Dijkstra(T vertex) 
-	{
-		int source;
-		int start;
-		int preIndex;
-		source = indexIs(vertex);
-		start = source;
-		//preIndex = source;
-		int[] dist = new int[DEFCAP];
-		for(int i = 0; i < DEFCAP; i++) 
-		{
-			dist[i] = MAX_WEIGHT;
-		}
-		
-		while(isComplete(marks)) 
-		{
-			for(int i = 0; i < numVertices; i++) 
-			{
-				if(edges[start][i] != NULL_EDGE && !marks[i]) 
-				{
-					if(dist[i] > dist[start]+edges[start][i]) 
-					{
-						dist[i]=dist[start]+edges[start][i];
-					}
-				}
-				
-			}
-			int min = MAX_WEIGHT;
-			int minIndex = -1;
-			for(int i = 0; i < dist.length; i++) 
-			{
-				if(marks[i])
-					continue;
-				if(min > dist[i]) 
-				{
-					min = dist[i];
-					minIndex = i;
-				}
-			}
-			start = minIndex;
-		}
-		
-		return dist;
-		
-
-		//		int fromIndex,toIndex;
-//		fromIndex = indexIs(vertex);
-//		int[] dist = new int[numVertices];
-//		int[] prev = new int[numVertices];
-		
-		//ArrayList<String> path = new ArrayList<String>();
-//
-//		for(int i =0; i < numVertices; i ++) 
-//		{
-//			if(edges[fromIndex][i] != NULL_EDGE) 
-//			{
-//				dist[i] = edges[fromIndex][i];
-//				prev[i] = edges[fromIndex][i];
-//			}else 
-//			{
-//				dist[i] = 10000;
-//				prev[i] = 10000;
-//			}
-//			//marks[i] = false;
-//		}
-//		int minIndex = findMin(dist);
-//		marks[minIndex] = true;
-
-	}
-	
+	// public QueueInterface<T> getToVertices(T vertex)
+	// {
+	// 	QueueInterface<T> adjVertices = new LinkedQueue<T>();
+	// 	int fromIndex, toIndex;
+	// 	fromIndex = indexIs(vertex);
+	// 	for(toIndex = 0; toIndex < numVertices; toIndex++) 
+	// 	{
+	// 		if(edges[fromIndex][toIndex] != NULL_EDGE) {
+	// 			try {
+	// 				adjVertices.enqueue(vertices[toIndex]);
+	// 			} catch (QueueOverflowException e) {
+	// 				// TODO Auto-generated catch block
+	// 				e.printStackTrace();
+	// 			}
+	// 		}
+	// 	}
+	// 	return adjVertices;
+	// }	 	
 	
 	public boolean isComplete(boolean marks[])
 	{
 		boolean result = true;
-		for(int i = 0; i < marks.length; i++) 
+		for(int i = 0; i < numVertices; i++) 
 		{
 			if(!marks[i])
 				result = false;
 		}
 		return result;
 	}
-//	public void markPath(T vertex, int dist[]) 
-//	{
-//		int start = indexIs(vertex);
-//		int index = -1;
-//		int weight = 10000;
-//		for(int i = 0; i < numVertices; i++) 
-//		{
-//			if(edges[start][i] != NULL_EDGE && !marks[i]) 
-//			{
-//				if(dist[i] > (dist[start] + edges[start][i])) 
-//				{
-//					dist[i] = dist[start] + edges[start][i];
-//				} 
-//			}
-//		}
-//		
-//		int min = 10000;
-//		int minIndex = 0;
-//		for(int i = 0; i < numVertices; i++) 
-//		{
-//			if(marks[i]) 
-//				continue;
-//			if(dist[i] < min) 
-//			{
-//				min = dist[i];
-//				minIndex = i;
-//			}
-//		}
-//		marks[minIndex] = true;
-//	}
-//	
+
 	public int findMin(int[] a) 
 	{
 		int min = 10000;
@@ -225,10 +128,10 @@ public class WeightedGraph<T>{
 	}
 	public void showMatrix() 
 	{
-		for(int i = 0; i < edges.length; i++) 
+		for(int i = 0; i < numVertices; i++) 
 		{
 			System.out.print("\n");
-			for(int j = 0; j < edges[i].length;j++) 
+			for(int j = 0; j < numVertices;j++) 
 			{
 				System.out.print(edges[i][j]+",");
 			}
@@ -245,8 +148,7 @@ public class WeightedGraph<T>{
 			marks[i] = false;
 		}
 	}
-	
-	public LinkedQueue<T> shortestPath(T vertex, T target) 
+	public int[] getShortestWeight(T vertex)
 	{
 		cleanMarks();
 		int source = indexIs(vertex);
@@ -260,16 +162,99 @@ public class WeightedGraph<T>{
 		
 		dist[source] = 0;
 		int start = source;
-		
-//		T[] path = (T[])new Object[10];				
+			
+		int[] path = new int[numVertices];		
 //		int temp = 0;
-//		for(int i = 0; i < dist.length; i++) 
-//		{
-//			path[i] = null;
-//		}
+		for(int i = 0; i < numVertices; i++) 
+		{
+			path[i] = -1;
+		}
 		
-		LinkedQueue<T> path = new LinkedQueue<T>();
-		int prev = MAX_WEIGHT;
+		// LinkedQueue<T> path = new LinkedQueue<T>();
+		// int prev = MAX_WEIGHT;
+		
+		while(!isComplete(marks)) 
+		{
+			
+			//showMarks(marks);
+//			System.out.println("");
+			boolean flag = false;
+			
+			for(int toVertex = 0; toVertex < numVertices; toVertex++) 
+			{
+				if(edges[start][toVertex] != NULL_EDGE && !marks[toVertex]) 
+				{
+					if(dist[toVertex] > edges[start][toVertex]+dist[start]) 
+					{
+						dist[toVertex] = edges[start][toVertex]+dist[start];
+						path[toVertex] = start;
+					}
+//					System.out.print(toVertex+",");
+				}
+			}
+
+			
+						
+			//System.out.println("process test2");
+			int minValue = MAX_WEIGHT;
+			int minIndex = start;
+			for(int i = 0;i < numVertices; i++) 
+			{
+				if(!marks[i] && minValue > dist[i]) 
+				{
+					minValue = dist[i];
+					minIndex = i;
+				}
+			}
+			
+				// try {
+				// 	path.enqueue(vertices[start]);
+				// } catch (QueueOverflowException e) {
+				// 	// TODO Auto-generated catch block
+				// 	e.printStackTrace();
+				// }
+			
+			start = minIndex;
+			marks[start] = true;
+			//System.out.println("length:"+path.length);
+			//System.out.println(" ");
+//			for(int i = 0; i < numVertices; i++) 
+//			{
+//				System.out.print(dist[i]+",");
+//			}
+//			System.out.println("choose"+ start);
+			
+		}
+
+		return dist;
+	}
+
+
+	public ArrayList<Integer> shortestPath(T vertex, T target) 
+	{
+		cleanMarks();
+		int source = indexIs(vertex);
+		marks[source] = true;
+		
+		int[] dist = new int[numVertices];
+		for(int i = 0; i < dist.length; i++) 
+		{
+			dist[i] = MAX_WEIGHT;
+		}
+		
+		dist[source] = 0;
+		int start = source;
+			
+		int[] path = new int[numVertices];		
+//		int temp = 0;
+		for(int i = 0; i < numVertices; i++) 
+		{
+			path[i] = -1;
+		}
+		path[source] = source; 
+		
+		// LinkedQueue<T> path = new LinkedQueue<T>();
+		// int prev = MAX_WEIGHT;
 		
 		while(!vertices[start].equals(target)) 
 		{
@@ -285,13 +270,14 @@ public class WeightedGraph<T>{
 					if(dist[toVertex] > edges[start][toVertex]+dist[start]) 
 					{
 						dist[toVertex] = edges[start][toVertex]+dist[start];
+						path[toVertex] = start;
 					}
 //					System.out.print(toVertex+",");
 				}
 			}
 
 			
-			
+						
 			//System.out.println("process test2");
 			int minValue = MAX_WEIGHT;
 			int minIndex = start;
@@ -304,15 +290,16 @@ public class WeightedGraph<T>{
 				}
 			}
 			
-				try {
-					path.enqueue(vertices[start]);
-				} catch (QueueOverflowException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				// try {
+				// 	path.enqueue(vertices[start]);
+				// } catch (QueueOverflowException e) {
+				// 	// TODO Auto-generated catch block
+				// 	e.printStackTrace();
+				// }
 			
 			start = minIndex;
 			marks[start] = true;
+			//System.out.println("length:"+path.length);
 			//System.out.println(" ");
 //			for(int i = 0; i < numVertices; i++) 
 //			{
@@ -321,9 +308,82 @@ public class WeightedGraph<T>{
 //			System.out.println("choose"+ start);
 			
 		}
-		return path;
+		// return dist[start];
+
+		ArrayList<Integer> list = getShortestPath(path,source,start);
+		return list;
 		
 	}
+
+	public ArrayList<Integer> getShortestPath(int[] path,int source,int start)
+	{
+		// int[] path = new int[numVertices];
+
+		// int temp = i.length-1;
+		// int k = 0;
+		// while(k < i.length)
+		// {
+		// 	path[k] = i[i.length-k-1];
+		// 	k++;
+		// }
+
+		//System.out.println("\npath list is");
+		// for(int n = 0; n < path.length;n++)
+		// {
+		// 	System.out.print(path[n]+",");
+		// }
+
+
+		// System.out.println("array2");
+		// for(int n = 0; n < path.length;n++)
+		// {
+		// 	System.out.print(path[n]+",");
+		// }
+		ArrayList<Integer> a = new ArrayList<Integer>();
+		//System.out.println("\nStart is :"+ (Integer.valueOf(start)+1));
+		int p = start;
+		while(p < path.length)
+		{
+
+			if(path[p] == source)
+			{
+				a.add(path[p]);
+				break;
+			}
+
+			if(path[p] == -1)
+			{
+				break;
+			}
+
+			//System.out.println("node: "+path[p]+"is added");
+			a.add(path[p]);
+			p = path[p];
+		}
+
+		// for(int tep:a)
+		// {
+		// 	System.out.print(tep);
+		// }
+
+		// System.out.println("test---1");
+		// while(!s.isEmpty()){
+		// 	System.out.println("test---2");
+		// 	try{
+		// 		System.out.println("test---2");
+		// 		int m = s.dequeue();
+		// 		System.out.print(m+",");
+		// 		System.out.println("test---2");
+		// 	}catch(Exception e) {
+		// 		// TODO Auto-generated catch block
+		// 		e.printStackTrace();
+		// 	}
+
+		// }
+
+		return a;
+  	}
+
 	public void showMarks(boolean marks[]) 
 	{
 		System.out.print("\n");
@@ -342,4 +402,19 @@ public class WeightedGraph<T>{
 //			route = 
 //		}
 //	}
+	public int[] forwardTable(T route)
+	{
+		int start = indexIs(route);
+		int[] forwardTable = new int[numVertices];
+		for(int toIndex = 0; toIndex < numVertices; toIndex++) 
+		{
+			if(edges[start][toIndex] != NULL_EDGE) {
+				forwardTable[toIndex] = edges[start][toIndex];
+			}else
+			{
+				forwardTable[toIndex] = 99999;
+			}
+		}
+		return forwardTable;
+	}
 }

@@ -1,5 +1,3 @@
-
-
 public class LinkedQueue<T> implements QueueInterface<T> 
 {
 	protected LLNode<T> front;
