@@ -14,8 +14,8 @@ public class Operator {
 	//public WeightedGraph<String> graph = new WeightedGraph<String>();
 	public WeightedGraph<String> graph;
 	static Formatter formatter = new Formatter(System.out);
-	String route = "1";
-	String filename = "test.txt";
+	String route = "0";
+	String filename = "D:\\code\\java\\src\\test.txt";
 
 
 	public void enter() throws IOException 
@@ -46,9 +46,10 @@ public class Operator {
 		{
 			String target = String.valueOf(i);
 			ArrayList<Integer> list = graph.shortestPath(route,target);
-			//System.out.println("test ");
+			System.out.println("test ");
 			//System.out.println("result:");
 			Collections.reverse(list);
+			System.out.println(list.size());
 			for(int tep:list)
 			{	
 				//System.out.print((Integer.valueOf(tep)+1)+"--->");
@@ -74,12 +75,12 @@ public class Operator {
 			// System.out.println("R"+(Integer.valueOf(target)+1)+"         |"+ p);
 		}
 		System.out.println("Source route:" + (Integer.valueOf(route)+1));
-		System.out.println("route      |Path                   |Distance");
+		System.out.println("route      |Path                |Distance");
 		System.out.println("---------------------------------------------");
 		for(int i = 0; i < graph.getNodeNumber(); i++)
 		{
 			// System.out.println((i+1)+"          |"+result[i]+"     |"+weight[i]);
-			formatter.format("%-10s %-20s %5s\n",(i+1)+"","|"+result[i],"|"+weight[i]);
+			formatter.format("%-10s %-20s %-5s\n",(i+1)+"","|"+result[i],"|"+weight[i]);
 		}	
 	}
 	
@@ -204,7 +205,16 @@ public class Operator {
 					break;
 				case "3":
 					System.out.println("operation 3");	
-					op.findShortestPath("3");
+					System.out.println("Source route is : R"+ (Integer.valueOf(op.route)+1));
+					for(int i = 0; i < op.graph.getNodeNumber() ;i++) 
+					{
+						if(i == op.graph.indexIs(op.route)) 
+							continue;
+						System.out.println("Destination: R"+(i+1));
+						op.graph.getAllpath(op.route, String.valueOf(i));
+						System.out.println("-----------------------");
+					}	
+					op.findShortestPath(op.route);
 					op.enter();
 					break;
 				case "4":
@@ -215,16 +225,33 @@ public class Operator {
 					String c = "1";
 					if(s4.hasNextLine())
 					{
-						op.route = s4.nextLine();
+						c = s4.nextLine();
 					}
 					if(c.equals("1"))
 					{
 						System.out.println("add a new router.....");
-						String newVertex = String.valueOf(graph.getNodeNumber());
-						graph.addVertex(newVertex);
-						System.out.println("a new router R"+graph.getNodeNumber()+" has been added successfully.")
+						String newVertex = String.valueOf(op.graph.getNodeNumber());
+						op.graph.addVertex(newVertex);
+						System.out.println("a new router R"+op.graph.getNodeNumber()+" has been added successfully.");
 					}else if(c.equals("2"))
 					{
+						Scanner e = new Scanner(System.in);
+						String newEdge = null;
+						System.out.println("Please input fromRoute and toRoute like: fromRoute,toRoute,weight");
+						if(e.hasNextLine()) 
+						{
+							newEdge = e.nextLine();
+						}else 
+						{
+							System.out.println("input error");
+							continue;
+						}
+						String[] r = newEdge.split(",");
+						String r1 = String.valueOf((Integer.valueOf(r[0].replaceAll("R", ""))-1));
+						String r2 = String.valueOf((Integer.valueOf(r[1].replaceAll("R", ""))-1));
+						String r3 = r[2];
+						op.graph.addEdge(r1, r2, Integer.valueOf(r3));
+//						String c = "1";
 						System.out.println("add a new edge");
 					}else
 					{
@@ -244,6 +271,7 @@ public class Operator {
 					//break;
 				case "6":
 					op.printMatrix();
+					op.enter();
 					break; 
 				default:
 					System.out.println("please input valid value(1~6).");

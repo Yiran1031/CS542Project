@@ -148,12 +148,46 @@ public class WeightedGraph<T>{
 			marks[i] = false;
 		}
 	}
+	public boolean hasEdge(T v) 
+	{
+		for(int i= 0; i < numVertices; i++) 
+		{
+			if(edges[indexIs(v)][i] != NULL_EDGE) 
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean reachable(T source, T route) 
+	{
+		pathStack.clean();
+		pathList.clear();
+		searchPath(source,route);
+		if(pathList.isEmpty()) 
+		{
+			System.out.println("There is no way to reach here");
+			return false;
+		}
+		return true;
+	}
+	
 	public int[] getShortestWeight(T vertex)
 	{
 		cleanMarks();
 		int source = indexIs(vertex);
 		marks[source] = true;
-		
+		for(int i = 0; i < numVertices; i++) 
+		{
+			if(!reachable(vertex,vertices[i])) 
+			{
+				marks[i] = true;
+				showMarks(marks);
+				//System.out.println("??");
+			}
+		}
+//		
 		int[] dist = new int[numVertices];
 		for(int i = 0; i < dist.length; i++) 
 		{
@@ -179,7 +213,7 @@ public class WeightedGraph<T>{
 			//showMarks(marks);
 //			System.out.println("");
 			boolean flag = false;
-			
+			System.out.println("test");
 			for(int toVertex = 0; toVertex < numVertices; toVertex++) 
 			{
 				if(edges[start][toVertex] != NULL_EDGE && !marks[toVertex]) 
@@ -235,6 +269,14 @@ public class WeightedGraph<T>{
 		cleanMarks();
 		int source = indexIs(vertex);
 		marks[source] = true;
+//		for(int i = 0; i < numVertices; i++) 
+//		{
+//			if(!reachable(vertex,target)) 
+//			{
+//				marks[i] = true;
+//			}
+//		}
+		
 		
 		int[] dist = new int[numVertices];
 		for(int i = 0; i < dist.length; i++) 
@@ -256,10 +298,10 @@ public class WeightedGraph<T>{
 		// LinkedQueue<T> path = new LinkedQueue<T>();
 		// int prev = MAX_WEIGHT;
 		
-		while(!vertices[start].equals(target)) 
+		while(!vertices[start].equals(target) && reachable(vertex,target)) 
 		{
 			
-			//showMarks(marks);
+			showMarks(marks);
 //			System.out.println("");
 			boolean flag = false;
 			
@@ -417,4 +459,162 @@ public class WeightedGraph<T>{
 		}
 		return forwardTable;
 	}
+	
+	LinkedStack<T> pathStack = new LinkedStack();
+	ArrayList<T[]> pathList = new ArrayList();
+	
+	public boolean isFind(ArrayList<String> pathList,String path) 
+	{
+		for(String s : pathList) 
+		{
+			if(s.equals(path)) 
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	int numPath = 0;
+	public boolean exit(int[] a, int target) 
+	{
+		for(int i = 0; i < a.length;i++) 
+		{
+			if(a[i]==target) 
+			{
+				System.out.println("test target is"+a[i]+"and"+target);
+				a[i] = target;
+				return true;
+			}
+		}
+		return false;
+	}
+	public void searchPath(T fromVertex,T target) 
+	{
+		if(pathStack.exist(fromVertex)) 
+		{
+			return;
+		}
+		pathStack.push(fromVertex);
+
+		if(fromVertex.equals(target)) 
+		{
+			//System.out.println("record a path");
+			pathList.add(pathStack.getAll());
+			pathStack.pop();
+			return;
+		}
+		
+		for(int i = 0; i < numVertices; i++) {
+			if(edges[indexIs(fromVertex)][i] != NULL_EDGE && edges[indexIs(fromVertex)][i] != 0) 
+			{
+				searchPath(vertices[i],target);
+			}
+		}
+		
+		pathStack.pop();
+//		System.out.println("fromVertex is:"+fromVertex);
+//		System.out.println("target is:" + target);
+//		int[] p = path;
+//		
+//		if(exit(p,target)) 
+//		{
+//			System.out.println("record a path is:");
+//			for(int i = 0; i < path.length;i++) 
+//			{
+//				if(path[i] == -1)
+//					break;
+//				System.out.print(path[i]+",");
+//			}
+//			return;
+//		}else if(exit(p,fromVertex)) 
+//		{
+//			return;
+//		}
+//
+//		for(int i = 0; i < numVertices; i++) 
+//		{
+//			if(p[i] == -1) 
+//			{
+//				p[i] = fromVertex;
+//				break;
+//			}
+//		}
+//			System.out.println("search adjacent .......");
+//			for(int i = 0; i < numVertices; i++) 
+//			{
+//				if(edges[fromVertex][i] != NULL_EDGE && edges[fromVertex][i]!=0) 
+//				{
+//					searchPath(i,target,p); 
+//				}
+//			}
+//		
+////		}
+		
+	}
+	public void getAllpath(T source, T target) 
+	{
+		pathStack.clean();
+		pathList.clear();
+		searchPath(source,target);
+		if(pathList.isEmpty()) 
+		{
+			System.out.println("There is no way to reach here");
+		}
+		for(T[] p : pathList) 
+		{
+			System.out.print("a new path is:");
+			for(int i = p.length-1; i >= 0;i--) 
+			{
+				if(p[i].equals(target)) 
+				{
+					System.out.print("R"+(Integer.valueOf(String.valueOf(p[i]))+1));
+					break;
+				}
+				if(p[i] == null)
+					continue;
+				System.out.print("R"+(Integer.valueOf(String.valueOf(p[i]))+1)+"--->");
+
+			}
+			System.out.print("\n");
+		}
+//		System.out.println("Start search all path");
+//		int s = indexIs(source);
+//		int t = indexIs(target);
+//		int[] p = new int[numVertices];
+//		for(int i = 0; i < numVertices; i++) 
+//		{
+//			p[i] = -1;
+//		}
+//		searchPath(s,t, p);
+	}
+//	public void getAllPath(T source, T target) 
+//	{
+//		LinkedStack<T> pathStack = new LinkedStack<T>();
+//		pathStack.push(source);
+//		int fromIndex = indexIs(source);
+//		cleanMarks();
+//		marks[fromIndex] = true;
+//		ArrayList<String> pathList = new ArrayList<String>();
+//		int toIndex = 0;
+////		for(int toIndex = 0;toIndex < numVertices; toIndex++) 
+////		{
+//		while(toIndex < numVertices) {
+//			if(edges[fromIndex][toIndex] == NULL_EDGE||edges[fromIndex][toIndex] == 0) {
+//				toIndex++;
+//				continue;
+//			}else 
+//			{
+//				if(marks[toIndex]) 
+//					continue;
+//				pathStack.push(vertices[toIndex]);
+//				marks[toIndex] = true;
+//				fromIndex = toIndex;
+//				toIndex++;
+//				break;
+//			}
+//		}
+////		}
+//		
+//	}
 }
