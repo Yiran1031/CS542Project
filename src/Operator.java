@@ -262,6 +262,32 @@ public class Operator {
 
 				case "5":
 					System.out.println("operation 5");
+					int[] allWeight = new int[op.graph.getNodeNumber()];
+					for(int i = 0; i < op.graph.getNodeNumber();i++) 
+					{
+						int[] weight = op.graph.getShortestWeight(op.graph.getVertices(i));
+						for(int j = 0; j < op.graph.getNodeNumber();j++) 
+						{
+							allWeight[i] = allWeight[i]+weight[j];
+						}
+					}
+					int min = 999999;
+					int bestRoute = 0;
+					System.out.println("Route      |Weight");
+					System.out.println("---------------------");
+					for(int i = 0; i < allWeight.length; i ++) 
+					{
+						formatter.format("%-10s %-20s\n","R"+(i+1),"|"+allWeight[i]);
+						if(min >= allWeight[i]) 
+						{
+							min = allWeight[i];
+							bestRoute = i;
+						}
+					}
+					
+					System.out.println("The best route is: R"+(bestRoute+1)+ ". The weight is:"+min);
+					
+					
 					op.enter();
 					break;
 				case "7":

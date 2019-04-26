@@ -213,7 +213,7 @@ public class WeightedGraph<T>{
 			//showMarks(marks);
 //			System.out.println("");
 			boolean flag = false;
-			System.out.println("test");
+			//System.out.println("test");
 			for(int toVertex = 0; toVertex < numVertices; toVertex++) 
 			{
 				if(edges[start][toVertex] != NULL_EDGE && !marks[toVertex]) 
